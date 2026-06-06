@@ -1,7 +1,24 @@
 import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import 'nextra-theme-docs/style.css'
+
+// 自托管字体(构建时下载、打进产物,不依赖 Google CDN,适配国内 + 静态部署)
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-openapi-sans'
+})
+const jbmono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-openapi-mono'
+})
+
+// 中文回退栈:拉丁字形用 Inter,中文交给系统苹方/雅黑
+const SANS_STACK = `var(--font-openapi-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif, "Apple Color Emoji", "Segoe UI Emoji"`
+const MONO_STACK = `var(--font-openapi-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
 
 export const metadata = {
   title: {
@@ -30,7 +47,13 @@ const footer = (
 
 export default async function RootLayout({ children }) {
   return (
-    <html lang="zh-CN" dir="ltr" suppressHydrationWarning>
+    <html
+      lang="zh-CN"
+      dir="ltr"
+      className={`${inter.variable} ${jbmono.variable}`}
+      style={{ '--x-font-sans': SANS_STACK, '--x-font-mono': MONO_STACK }}
+      suppressHydrationWarning
+    >
       <Head />
       <body>
         <Layout
