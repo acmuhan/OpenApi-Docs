@@ -47,16 +47,41 @@ CC Switch 负责「保存与切换配置」,真正的接入参数还是 OpenApi 
 
 从 [官网](https://ccswitch.io) 或 [GitHub Releases](https://github.com/farion1231/cc-switch/releases) 下载对应平台的安装包并安装。
 
-### 新建一套指向 OpenApi 的配置
+### 方案一 - 新建一套指向 OpenApi 的配置
 
-在 CC Switch 中新增一个供应商 / 配置项,把地址填为 OpenApi 站点根、密钥填为你的令牌:
-
+在 CC Switch 中新增一个供应商 / 配置项,把地址填为 OpenApi 站点根、密钥填为你的令牌（以Claude Code CLI为例）:
+- *不同客户端添加CC Switch配置的示例图如下*
+- ![Example-CCSW](../../images/add-channel-to-ccsw.png)
+按以下图文示例填写各项信息
+*Step1：*
+- ![添加渠道](../../images/add-channel-step1.png)
+*Step2：*
+- ![添加渠道-选择制式](../../images/add-channel-step2.1.png)
+- ![添加渠道-填写表单](../../images/add-channel-step2.2.png)
 - 地址(Base URL):`https://api.openrealm.cn`
 - 密钥(Token / Key):`sk-...`
 - 取个好认的名字,例如「OpenApi-主站」「OpenApi-Global」,方便区分线路。
+- 在设置模型时，您可能会遇到**使用模型非IDE原生模型**（如在CC上使用GPT）~~NTR+1~~，此时需要按下图调整**高级设置**配置模型映射
+- ![添加渠道-映射](../../images/add-channel-step2.3.png)
+
+### 方案二 - 使用Open-API的自动配置
+在 Open-API站点 的 令牌管理 标签页尝试自动添加
+- 展开密钥栏 聊天 按钮旁边的三角按钮，选“CC Switch”，没有密钥则必须先创建密钥才能继续
+- ![自动配置](../../images/add-channel-auto-1.png)
+- 按自己的喜好选择模型后，点按按钮打开CC Switch
+- ![自动配置-跳转](../../images/add-channel-auto-2.png)
+- 弹出此窗口时请务必点击打开**千万不要顺手点蓝色的按钮了**
+- ![自动配置-跳转URI](../../images/add-channel-auto-2.1.png)
+- 确认信息无误后导入
+- ![自动配置-确认信息](../../images/add-channel-auto-3.png)
 
 <Callout type="warning">
   用于 Claude Code 的配置,地址填到**站点根(不带 `/v1`)**;Claude Code 会自行拼接 `/v1/messages`。这与 [Claude Code 接入](/clients/claude-code) 里手动设环境变量是同一套参数,只是改由 CC Switch 托管。
+  **自动配置添加完成的渠道不是一定可用的，它和手工渠道一样需要经过测试**
+  *对表单的特别提醒：绝大多数情况下请求地址末尾不需要加/v1，模型有特殊标注的，按模型标注执行*
+  *为什么没讲JSON/TOML处的高级设置？——因为本篇文档的目的是为了让用户以最快速度用上好用的模型，而不是专业教学，且各高级功能在不同模型下表现不一，难以形成可靠文档，望读者见谅*
+  *请注意，高级选项中的API格式一般不需要更改的原因是Open-API站点在大多数情况下支持常见API格式到格式转换，但部分特别标记的模型除外——它们可能必须使用特殊的请求格式*
+按如下图文配置启用配置
 </Callout>
 
 ### 切换并启动
