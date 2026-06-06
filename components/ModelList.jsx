@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import pricing from './pricing-data.json'
+import { Select } from './Select'
 
 // 数据策略:构建期快照(pricing-data.json)作为初始/兜底值,确保静态导出后立即有内容;
 // 挂载后再请求边缘函数 /api/pricing(functions/api/pricing.js)拿实时数据覆盖。
@@ -72,12 +73,19 @@ export function ModelList() {
       <style>{CSS}</style>
       <div className="oa-ml-bar">
         <input className="oa-ml-input" placeholder="搜索模型名…" value={q} onChange={e => setQ(e.target.value)} />
-        <select className="oa-ml-select" value={proto} onChange={e => setProto(e.target.value)}>
-          <option value="all">全部协议</option>
-          <option value="openai">OpenAI</option>
-          <option value="anthropic">Anthropic</option>
-          <option value="gemini">Gemini</option>
-        </select>
+        <div style={{ flex: '0 0 160px' }}>
+          <Select
+            value={proto}
+            onChange={setProto}
+            icon="tune"
+            options={[
+              { value: 'all', label: '全部协议' },
+              { value: 'openai', label: 'OpenAI' },
+              { value: 'anthropic', label: 'Anthropic' },
+              { value: 'gemini', label: 'Gemini' }
+            ]}
+          />
+        </div>
       </div>
       <div className="oa-ml-count">共 {filtered.length} 个模型 · 点击模型名复制</div>
       <div className="oa-ml-grid">

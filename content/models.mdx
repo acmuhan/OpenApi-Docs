@@ -1,10 +1,9 @@
 ---
 title: 模型
-description: OpenApi 可用模型,按协议与分组浏览、选择;并可凭 Key 查询专属可用模型
+description: OpenApi 可用模型,按协议与分组浏览、选择
 ---
 
 import { ModelList } from '../components/ModelList'
-import { MyModels } from '../components/MyModels'
 
 # 模型
 
@@ -13,9 +12,5 @@ import { MyModels } from '../components/MyModels'
 <ModelList />
 
 > 模型清单实时来自站点接口;具体价格与最新上架情况,请以站点的 [价格页](https://api.openrealm.cn/pricing) 为准。
-
-## 查询「我的可用模型」
-
-上面是**全站模型目录**。而不同 Key 因所属**分组**不同,实际能调用的模型也不同。填入你的 Key,即可查询**这把 Key 真正可用**的模型列表(直接调用 OpenAI 标准的 `/v1/models`)。
-
-<MyModels />
+>
+> 想查看**某把 Key 实际可用**的模型?到 [在线调试](/playground) 填入 Key,点「获取我的可用模型」即可。
