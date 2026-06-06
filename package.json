@@ -10,6 +10,7 @@
     "dev": "next dev --webpack",
     "prebuild": "node scripts/fetch-pricing.mjs",
     "build": "next build",
+    "postbuild": "pagefind --site out --output-subdir _pagefind",
     "preview": "npx --yes serve out"
   },
   "devDependencies": {
