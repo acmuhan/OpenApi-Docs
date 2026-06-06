@@ -64,3 +64,4 @@
  GET /clients/cherry-studio 200 in 76ms (next.js: 27ms, generate-params: 24ms, application-code: 49ms)
  GET /clients/chatbox 200 in 45ms (next.js: 3ms, generate-params: 28µs, application-code: 42ms)
  GET /clients/cc-switch 200 in 65ms (next.js: 25ms, generate-params: 22ms, application-code: 40ms)
+[?25h

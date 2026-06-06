@@ -1,9 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import pricing from './pricing-data.json'
 
-// 走本站同源代理(app/api/pricing/route.js),绕开 openrealm /api/pricing 未开 CORS 的问题
-const PRICING_URL = '/api/pricing'
+// 数据策略:构建期快照(pricing-data.json)作为初始/兜底值,确保静态导出后立即有内容;
+// 挂载后再请求边缘函数 /api/pricing(functions/api/pricing.js)拿实时数据覆盖。
+// 边缘函数未就绪或失败时,静默保留快照,不显示错误。
+const SNAPSHOT = pricing.models || []
 const PROTO = {
   openai: { label: 'OpenAI', color: '#10a37f' },
   anthropic: { label: 'Anthropic', color: '#d97757' },
@@ -30,30 +33,29 @@ const CSS = `
 `
 
 export function ModelList() {
-  const [data, setData] = useState(null)
-  const [err, setErr] = useState(null)
+  const [models, setModels] = useState(SNAPSHOT)
   const [q, setQ] = useState('')
   const [proto, setProto] = useState('all')
   const [copied, setCopied] = useState('')
 
   useEffect(() => {
-    fetch(PRICING_URL, { cache: 'no-store' })
-      .then(r => r.json())
+    let alive = true
+    fetch('/api/pricing', { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
       .then(j => {
-        if (j.error) throw new Error(j.error)
-        setData(j.data || [])
+        if (alive && j && Array.isArray(j.models) && j.models.length) setModels(j.models)
       })
-      .catch(e => setErr(String(e.message || e)))
+      .catch(() => {}) // 边缘函数未就绪时静默保留快照
+    return () => { alive = false }
   }, [])
 
   const filtered = useMemo(() => {
-    if (!data) return []
-    return data.filter(m => {
-      if (q && !m.model_name.toLowerCase().includes(q.toLowerCase())) return false
-      if (proto !== 'all' && !(m.supported_endpoint_types || []).includes(proto)) return false
+    return models.filter(m => {
+      if (q && !m.name.toLowerCase().includes(q.toLowerCase())) return false
+      if (proto !== 'all' && !(m.endpoints || []).includes(proto)) return false
       return true
     })
-  }, [data, q, proto])
+  }, [models, q, proto])
 
   function copy(name) {
     navigator.clipboard?.writeText(name)
@@ -61,46 +63,44 @@ export function ModelList() {
     setTimeout(() => setCopied(c => (c === name ? '' : c)), 1200)
   }
 
+  if (!models.length) {
+    return <p className="oa-ml-msg" style={{ color: '#dc2626' }}>暂无模型数据,请稍后再试。</p>
+  }
+
   return (
     <div className="oa-ml-wrap">
       <style>{CSS}</style>
-      {err && <p className="oa-ml-msg" style={{ color: '#dc2626' }}>模型列表加载失败:{err}</p>}
-      {!data && !err && <p className="oa-ml-msg">正在加载模型列表…</p>}
-      {data && (
-        <>
-          <div className="oa-ml-bar">
-            <input className="oa-ml-input" placeholder="搜索模型名…" value={q} onChange={e => setQ(e.target.value)} />
-            <select className="oa-ml-select" value={proto} onChange={e => setProto(e.target.value)}>
-              <option value="all">全部协议</option>
-              <option value="openai">OpenAI</option>
-              <option value="anthropic">Anthropic</option>
-              <option value="gemini">Gemini</option>
-            </select>
+      <div className="oa-ml-bar">
+        <input className="oa-ml-input" placeholder="搜索模型名…" value={q} onChange={e => setQ(e.target.value)} />
+        <select className="oa-ml-select" value={proto} onChange={e => setProto(e.target.value)}>
+          <option value="all">全部协议</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="gemini">Gemini</option>
+        </select>
+      </div>
+      <div className="oa-ml-count">共 {filtered.length} 个模型 · 点击模型名复制</div>
+      <div className="oa-ml-grid">
+        {filtered.map(m => (
+          <div key={m.name} className="oa-ml-card">
+            <code className="oa-ml-name" title="点击复制" onClick={() => copy(m.name)}>
+              {m.name}
+              {copied === m.name && <span className="oa-ml-copied">已复制</span>}
+            </code>
+            <div className="oa-ml-tags">
+              {(m.endpoints || []).map(p => {
+                const info = PROTO[p] || { label: p, color: '#888' }
+                return (
+                  <span key={p} className="oa-ml-tag" style={{ background: info.color + '22', color: info.color }}>
+                    {info.label}
+                  </span>
+                )
+              })}
+            </div>
+            <div className="oa-ml-grp">分组:{(m.groups || []).join(' / ') || '—'}</div>
           </div>
-          <div className="oa-ml-count">共 {filtered.length} 个模型 · 点击模型名复制</div>
-          <div className="oa-ml-grid">
-            {filtered.map(m => (
-              <div key={m.model_name} className="oa-ml-card">
-                <code className="oa-ml-name" title="点击复制" onClick={() => copy(m.model_name)}>
-                  {m.model_name}
-                  {copied === m.model_name && <span className="oa-ml-copied">已复制</span>}
-                </code>
-                <div className="oa-ml-tags">
-                  {(m.supported_endpoint_types || []).map(p => {
-                    const info = PROTO[p] || { label: p, color: '#888' }
-                    return (
-                      <span key={p} className="oa-ml-tag" style={{ background: info.color + '22', color: info.color }}>
-                        {info.label}
-                      </span>
-                    )
-                  })}
-                </div>
-                <div className="oa-ml-grp">分组:{(m.enable_groups || []).join(' / ') || '—'}</div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
+        ))}
+      </div>
     </div>
   )
 }

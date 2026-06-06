@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Icon } from './Icon'
+import pricing from './pricing-data.json'
+
+// 模型清单:构建期快照作初始/兜底值;挂载后请求边缘函数 /api/pricing 拿实时数据覆盖。
+const SNAPSHOT_MODELS = (pricing.models || [])
+  .filter(m => (m.endpoints || []).includes('openai'))
+  .map(m => m.name)
 
 const BASES = [
   { name: '主站 · 大陆 CDN', url: 'https://api.openrealm.cn/v1' },
@@ -43,20 +49,21 @@ export function Playground() {
   const [loading, setLoading] = useState(false)
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
-  const [models, setModels] = useState([])
   const [open, setOpen] = useState(false)
   const boxRef = useRef(null)
+  const [models, setModels] = useState(SNAPSHOT_MODELS)
 
   useEffect(() => {
+    let alive = true
     fetch('/api/pricing', { cache: 'no-store' })
-      .then(r => r.json())
+      .then(r => (r.ok ? r.json() : null))
       .then(j => {
-        const list = (j.data || [])
-          .filter(m => (m.supported_endpoint_types || []).includes('openai'))
-          .map(m => m.model_name)
-        setModels(list)
+        if (!alive || !j || !Array.isArray(j.models)) return
+        const list = j.models.filter(m => (m.endpoints || []).includes('openai')).map(m => m.name)
+        if (list.length) setModels(list)
       })
-      .catch(() => {})
+      .catch(() => {}) // 边缘函数未就绪时静默保留快照
+    return () => { alive = false }
   }, [])
 
   useEffect(() => {

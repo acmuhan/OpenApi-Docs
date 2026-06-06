@@ -8,8 +8,9 @@
   },
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "node scripts/fetch-pricing.mjs",
     "build": "next build",
-    "start": "next start"
+    "preview": "npx --yes serve out"
   },
   "devDependencies": {
     "pagefind": "^1.5.2"
