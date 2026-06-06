@@ -1,0 +1,193 @@
+---
+title: OpenAI 协议
+description: 用 OpenAI 兼容的 /v1/chat/completions 调用各种模型
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+# OpenAI 协议
+
+OpenApi 完整兼容 OpenAI 的 **Chat Completions** 接口。把官方 SDK 的 `base_url` 指向 OpenApi,你现有的 OpenAI 代码几乎不用改就能跑;而且可以用**同一套接口**调用 Claude、Gemini、Qwen 等几乎所有模型 —— 只需更换 `model` 字段。
+
+## 接口地址
+
+```
+POST https://api.openrealm.cn/v1/chat/completions
+```
+
+## 请求头
+
+| 头部 | 值 |
+| --- | --- |
+| `Authorization` | `Bearer <你的 API Key>` |
+| `Content-Type` | `application/json` |
+
+## 消息与角色
+
+请求体最核心的是 `messages` 数组,每条消息带一个 `role`:
+
+| role | 含义 |
+| --- | --- |
+| `system` | 设定助手的身份、风格与规则(可选,通常作为第一条) |
+| `user` | 用户的输入 |
+| `assistant` | 模型过去的回复(多轮对话时回填) |
+
+## 基础示例
+
+<Tabs items={['curl', 'Python', 'Node.js']}>
+
+<Tabs.Tab>
+
+```bash
+curl https://api.openrealm.cn/v1/chat/completions \
+  -H "Authorization: Bearer $OPENAPI_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.5",
+    "messages": [
+      { "role": "system", "content": "你是一个简洁的中文助手。" },
+      { "role": "user", "content": "用一句话介绍量子计算" }
+    ],
+    "temperature": 0.7
+  }'
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```python
+from openai import OpenAI
+
+client = OpenAI(api_key="sk-xxx", base_url="https://api.openrealm.cn/v1")
+
+resp = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[
+        {"role": "system", "content": "你是一个简洁的中文助手。"},
+        {"role": "user", "content": "用一句话介绍量子计算"},
+    ],
+    temperature=0.7,
+)
+print(resp.choices[0].message.content)
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```js
+import OpenAI from 'openai'
+
+const client = new OpenAI({ apiKey: 'sk-xxx', baseURL: 'https://api.openrealm.cn/v1' })
+
+const resp = await client.chat.completions.create({
+  model: 'gpt-5.5',
+  messages: [
+    { role: 'system', content: '你是一个简洁的中文助手。' },
+    { role: 'user', content: '用一句话介绍量子计算' },
+  ],
+})
+console.log(resp.choices[0].message.content)
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+  把 `model` 换成 `claude-sonnet-4.6`、`gemini-3-pro-preview` 等,即可用同一套代码调用其他模型。
+</Callout>
+
+## 多轮对话
+
+模型本身没有记忆,"记住上下文"靠你把历史消息一起发回去:每轮把模型的 `assistant` 回复和新的 `user` 输入追加到 `messages`,再次请求。
+
+```python
+messages = [{"role": "system", "content": "你是中文助手。"}]
+
+messages.append({"role": "user", "content": "我叫小明。"})
+reply = client.chat.completions.create(model="gpt-5.5", messages=messages)
+messages.append({"role": "assistant", "content": reply.choices[0].message.content})
+
+messages.append({"role": "user", "content": "我叫什么名字?"})
+reply = client.chat.completions.create(model="gpt-5.5", messages=messages)
+print(reply.choices[0].message.content)  # 模型能答出「小明」
+```
+
+## 流式输出
+
+设 `stream: true`,服务端会按 SSE 逐块返回内容,适合做打字机效果:
+
+<Tabs items={['Python', 'Node.js']}>
+
+<Tabs.Tab>
+
+```python
+stream = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[{"role": "user", "content": "写一首关于秋天的短诗"}],
+    stream=True,
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="", flush=True)
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```js
+const stream = await client.chat.completions.create({
+  model: 'gpt-5.5',
+  messages: [{ role: 'user', content: '写一首关于秋天的短诗' }],
+  stream: true,
+})
+for await (const chunk of stream) {
+  process.stdout.write(chunk.choices[0]?.delta?.content ?? '')
+}
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+## 常用参数
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `model` | string | 模型名,**必填** |
+| `messages` | array | 对话消息,**必填** |
+| `stream` | boolean | 是否流式,默认 `false` |
+| `temperature` | number | 随机性,`0~2`,越大越发散 |
+| `max_tokens` | integer | 限制输出长度 |
+| `top_p` | number | 核采样,与 `temperature` 二选一调节 |
+| `stop` | string \| array | 命中即停止生成的字符串 |
+| `tools` | array | 函数调用 / 工具定义 |
+
+## 响应结构
+
+```json
+{
+  "id": "chatcmpl-...",
+  "object": "chat.completion",
+  "model": "gpt-5.5",
+  "choices": [
+    {
+      "index": 0,
+      "message": { "role": "assistant", "content": "……" },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": { "prompt_tokens": 18, "completion_tokens": 24, "total_tokens": 42 }
+}
+```
+
+- 回复正文:`choices[0].message.content`
+- 用量(计费依据):`usage`
+
+<Callout type="warning">
+  返回 401:检查 Key 是否正确、是否带了 `Bearer ` 前缀。返回 403 / 无权限:多半是令牌**分组**不包含该模型,详见 [计费与价格](/pricing)。
+</Callout>

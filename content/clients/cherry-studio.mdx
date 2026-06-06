@@ -1,0 +1,67 @@
+---
+title: Cherry Studio 接入
+description: 在 Cherry Studio 中添加 OpenApi 作为 OpenAI 兼容供应商
+---
+
+import { Steps, Callout } from 'nextra/components'
+import { ConfigShot } from '../../components/Mockup'
+
+# 在 Cherry Studio 中接入 OpenApi
+
+[Cherry Studio](https://www.cherry-ai.com) 是一款跨平台桌面 AI 客户端,支持多供应商管理。把 OpenApi 作为一个「OpenAI 兼容」供应商加进去即可。
+
+填完之后,供应商设置大致是这个样子——重点是高亮的两栏:
+
+<ConfigShot
+  app="Cherry Studio · 模型服务"
+  baseLabel="API 地址"
+  base="https://api.openrealm.cn/v1"
+  keyLabel="API 密钥"
+  model="gpt-5.5 / claude-sonnet-4.6 …"
+  caption="API 地址带 /v1;密钥填你的 sk- 令牌;模型手动添加"
+/>
+
+## 你需要
+
+- 已安装 Cherry Studio 桌面端
+- 一个 OpenApi 的 `sk-...` 令牌
+
+<Steps>
+
+### 新建供应商
+
+打开 **设置 → 模型服务**,点底部的「**添加**」新建一个供应商;提供商类型(API 类型)选择 **OpenAI**。
+
+### 填写接口地址与密钥
+
+| 字段 | 填写内容 |
+| --- | --- |
+| API 地址 / API Host | `https://api.openrealm.cn/v1` |
+| API 密钥 / API Key | 你的 `sk-...` |
+
+<Callout type="warning">
+  Cherry Studio 属于 OpenAI 兼容客户端,地址要填到 **带 `/v1`**。如果它的输入框已经自带 `/v1` 提示或会自动补全,注意不要重复写成 `/v1/v1`。海外网络可改用 `https://global.api.openrealm.cn/v1`。
+</Callout>
+
+### 添加模型
+
+在该供应商下点「**添加模型 / 管理**」,把你要用的模型名手动加进去,例如 `gpt-5.5`、`claude-sonnet-4.6`、`gemini-3-pro-preview`。完整可用模型见 [模型](/models) 页(可直接复制模型名)。
+
+### 测试连通
+
+Cherry Studio 通常在供应商设置里提供「**检测 / 测试**」按钮,点一下确认返回正常;或直接新建对话选中该模型发一句话。
+
+</Steps>
+
+## 常见问题
+
+| 现象 | 可能原因 |
+| --- | --- |
+| 连接失败 / 404 | 地址漏了 `/v1`,或多写了一层。确认为 `https://api.openrealm.cn/v1`。 |
+| 401 未授权 | 令牌错误或已停用,去控制台核对。 |
+| 模型列表为空 | Cherry Studio 需要手动添加模型名,它不会自动拉取本服务的模型列表。 |
+| 某模型报无权限 | 该模型不在令牌所属分组,换模型或在控制台调整分组。 |
+
+<Callout type="info">
+  不确定 Key 是否可用?先到 [在线调试](/playground) 用同样的线路和模型发一条,确认无误再回来配置。
+</Callout>

@@ -1,0 +1,126 @@
+---
+title: Claude Code 接入
+description: 在 Claude Code CLI 中通过环境变量接入 OpenApi 的 Anthropic 兼容端点
+---
+
+import { Steps, Tabs, Callout } from 'nextra/components'
+import { TerminalShot, ConfigShot } from '../../components/Mockup'
+
+# 在 Claude Code 中接入 OpenApi
+
+[Claude Code](https://claude.com/claude-code) 是 Anthropic 官方的命令行编程助手。它通过**环境变量**决定请求发往哪里、用哪个密钥,因此把这两个变量指向 OpenApi 的 Anthropic 兼容端点即可。
+
+<TerminalShot
+  title="配置概览"
+  lines={[
+    { t: '# Claude Code 读取两个环境变量决定去向', type: 'cmt' },
+    { t: 'ANTHROPIC_BASE_URL  = https://api.openrealm.cn', type: 'var' },
+    { t: 'ANTHROPIC_AUTH_TOKEN = sk-••••••••', type: 'var' },
+    { t: '', type: 'out' },
+    { t: '$ claude', type: 'cmd' },
+    { t: '✓ 已连接到 OpenApi,开始对话', type: 'cmd' }
+  ]}
+  caption="核心就是这两个变量:地址 + 令牌"
+/>
+
+## 你需要
+
+- 已安装 Claude Code(`npm install -g @anthropic-ai/claude-code`)
+- 一个 OpenApi 的 `sk-...` 令牌(在 [控制台](https://api.openrealm.cn) 创建)
+
+<Steps>
+
+### 设置环境变量
+
+把 Base URL 指向 OpenApi 站点根(**不带 `/v1`**),令牌填到 `ANTHROPIC_AUTH_TOKEN`:
+
+<Tabs items={['macOS / Linux', 'Windows (PowerShell)']}>
+
+<Tabs.Tab>
+
+```bash
+export ANTHROPIC_BASE_URL="https://api.openrealm.cn"
+export ANTHROPIC_AUTH_TOKEN="sk-..."
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```powershell
+$env:ANTHROPIC_BASE_URL = "https://api.openrealm.cn"
+$env:ANTHROPIC_AUTH_TOKEN = "sk-..."
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+  海外网络可把域名换成 `https://global.api.openrealm.cn`。地址只填到站点根即可,Claude Code 会自行拼接 `/v1/messages`。
+</Callout>
+
+### 启动并选择模型
+
+```bash
+claude
+```
+
+进入交互界面后,用 `/model` 选择一个 Claude 系列模型(如 `claude-sonnet-4.6`、`claude-opus-4.7`)。可用模型名见 [模型](/models) 页。
+
+### 验证是否走的是 OpenApi
+
+随便问一句,若能正常回复即接入成功。也可以先发一个最小请求确认端点连通:
+
+```bash
+curl https://api.openrealm.cn/v1/messages \
+  -H "x-api-key: $ANTHROPIC_AUTH_TOKEN" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"claude-sonnet-4.6","max_tokens":64,"messages":[{"role":"user","content":"ping"}]}'
+```
+
+</Steps>
+
+## 让配置长期生效
+
+上面的 `export` / `$env:` 只在当前终端窗口有效。要长期生效:
+
+<Tabs items={['macOS / Linux', 'Windows (PowerShell)']}>
+
+<Tabs.Tab>
+
+把两行 `export` 写进 `~/.bashrc` 或 `~/.zshrc`,然后 `source ~/.zshrc` 重新加载:
+
+```bash
+echo 'export ANTHROPIC_BASE_URL="https://api.openrealm.cn"' >> ~/.zshrc
+echo 'export ANTHROPIC_AUTH_TOKEN="sk-..."' >> ~/.zshrc
+source ~/.zshrc
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+写入用户级环境变量(重开终端后生效):
+
+```powershell
+setx ANTHROPIC_BASE_URL "https://api.openrealm.cn"
+setx ANTHROPIC_AUTH_TOKEN "sk-..."
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+  如果你经常在 OpenApi 和其他供应商之间来回切换,手动改环境变量会很繁琐 —— 可以用 [CC Switch](/clients/cc-switch) 一键切换多套配置。
+</Callout>
+
+## 常见问题
+
+| 现象 | 可能原因 |
+| --- | --- |
+| 401 / 认证失败 | 令牌错误,或仍指向官方地址。确认 `ANTHROPIC_BASE_URL` 已生效(`echo $ANTHROPIC_BASE_URL`)。 |
+| 模型不可用 / 无权限 | 该模型不在令牌所属分组。换用 Claude 系列模型,或在控制台调整令牌分组。 |
+| 改了变量没效果 | 旧终端缓存了变量,**重开终端**或重新 `source` 后再启动 `claude`。 |

@@ -1,0 +1,165 @@
+---
+title: Anthropic 协议
+description: 用 Anthropic 兼容的 /v1/messages 调用 Claude 模型
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+# Anthropic 协议
+
+OpenApi 兼容 Anthropic 的 **Messages** 接口,适合直接使用 Claude 官方 SDK,或需要 Claude 原生特性的场景。
+
+## 与 OpenAI 协议的区别
+
+如果你已经看过 [OpenAI 协议](/openai),只需留意这几处不同:
+
+| | OpenAI 协议 | Anthropic 协议 |
+| --- | --- | --- |
+| 端点 | `/v1/chat/completions` | `/v1/messages` |
+| 鉴权头 | `Authorization: Bearer sk-...` | `x-api-key: sk-...` + `anthropic-version` |
+| 系统提示 | 放进 `messages`(`role: system`) | 顶层独立参数 `system` |
+| `max_tokens` | 可选 | **必填** |
+| SDK 的 `base_url` | 带 `/v1` | **不带** `/v1`(SDK 自动补全) |
+| 回复正文 | `choices[0].message.content` | `content[0].text` |
+
+## 接口地址
+
+```
+POST https://api.openrealm.cn/v1/messages
+```
+
+## 请求头
+
+| 头部 | 值 |
+| --- | --- |
+| `x-api-key` | 你的 API Key |
+| `anthropic-version` | `2023-06-01` |
+| `Content-Type` | `application/json` |
+
+## 基础示例
+
+<Tabs items={['curl', 'Python', 'Node.js']}>
+
+<Tabs.Tab>
+
+```bash
+curl https://api.openrealm.cn/v1/messages \
+  -H "x-api-key: $OPENAPI_KEY" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4.6",
+    "max_tokens": 1024,
+    "messages": [
+      { "role": "user", "content": "用一句话介绍你自己" }
+    ]
+  }'
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```python
+from anthropic import Anthropic
+
+# 注意 base_url 不带 /v1,SDK 会自动拼接 /v1/messages
+client = Anthropic(api_key="sk-xxx", base_url="https://api.openrealm.cn")
+
+msg = client.messages.create(
+    model="claude-sonnet-4.6",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "用一句话介绍你自己"}],
+)
+print(msg.content[0].text)
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+```js
+import Anthropic from '@anthropic-ai/sdk'
+
+const client = new Anthropic({ apiKey: 'sk-xxx', baseURL: 'https://api.openrealm.cn' })
+
+const msg = await client.messages.create({
+  model: 'claude-sonnet-4.6',
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: '用一句话介绍你自己' }],
+})
+console.log(msg.content[0].text)
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+  Python / Node SDK 的 `base_url` 是 `https://api.openrealm.cn`(**不含 `/v1`**),SDK 会自动拼接 `/v1/messages`。直接用 curl 时才写完整路径。
+</Callout>
+
+## 系统提示与多轮对话
+
+`system` 是**顶层参数**,不放进 `messages`;多轮对话同样把历史回填进 `messages`:
+
+```python
+msg = client.messages.create(
+    model="claude-sonnet-4.6",
+    max_tokens=1024,
+    system="你是一个简洁的中文助手。",
+    messages=[
+        {"role": "user", "content": "我叫小明。"},
+        {"role": "assistant", "content": "你好,小明!"},
+        {"role": "user", "content": "我叫什么名字?"},
+    ],
+)
+print(msg.content[0].text)
+```
+
+## 流式输出
+
+```python
+with client.messages.stream(
+    model="claude-sonnet-4.6",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "写一首关于秋天的短诗"}],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+```
+
+> 直接用 curl 时,在请求体加上 `"stream": true`,服务端会以 SSE 事件流(`message_start`、`content_block_delta`、`message_stop` 等)返回。
+
+## 常用参数
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `model` | string | 模型名,**必填** |
+| `messages` | array | 对话消息,**必填** |
+| `max_tokens` | integer | 最大输出 token,**必填** |
+| `system` | string | 系统提示(顶层参数) |
+| `temperature` | number | 随机性,`0~1` |
+| `stream` | boolean | 是否流式,默认 `false` |
+| `stop_sequences` | array | 命中即停止生成的字符串 |
+
+## 响应结构
+
+```json
+{
+  "id": "msg_...",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-4.6",
+  "content": [ { "type": "text", "text": "……" } ],
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 18, "output_tokens": 24 }
+}
+```
+
+- 回复正文:`content[0].text`(`content` 是数组,可能含多个块)
+- 用量:`usage.input_tokens` / `usage.output_tokens`
+
+<Callout type="warning">
+  忘记 `max_tokens` 会直接报错 —— 它是 Anthropic 协议的必填项。
+</Callout>

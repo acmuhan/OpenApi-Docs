@@ -1,0 +1,67 @@
+---
+title: ChatBox 接入
+description: 在 ChatBox 中使用 OpenApi 作为 OpenAI 兼容服务
+---
+
+import { Steps, Callout } from 'nextra/components'
+import { ConfigShot } from '../../components/Mockup'
+
+# 在 ChatBox 中接入 OpenApi
+
+[ChatBox](https://chatboxai.app) 是一款简洁的跨平台 AI 客户端(桌面 + 移动)。通过「OpenAI API 兼容」模式接入 OpenApi。
+
+配置面板填好后大致如下,关注高亮的两栏:
+
+<ConfigShot
+  app="ChatBox · OpenAI API 兼容"
+  baseLabel="API 域名 (Host)"
+  base="https://api.openrealm.cn/v1"
+  keyLabel="API 密钥"
+  model="gpt-5.5"
+  caption="Host 带 /v1;把默认的 api.openai.com 整段替换掉"
+/>
+
+## 你需要
+
+- 已安装 ChatBox(桌面端或移动端)
+- 一个 OpenApi 的 `sk-...` 令牌
+
+<Steps>
+
+### 选择模型提供方
+
+打开 **设置(Settings)**,在模型 / 提供方中选择 **「OpenAI API 兼容」**(OpenAI API Compatible)。
+
+### 填写域名与密钥
+
+| 字段 | 填写内容 |
+| --- | --- |
+| API 域名 / API Host | `https://api.openrealm.cn/v1` |
+| API 密钥 / API Key | 你的 `sk-...` |
+
+<Callout type="warning">
+  ChatBox 是 OpenAI 兼容客户端,地址填到 **带 `/v1`**。部分版本的 Host 默认值是 `https://api.openai.com/v1` —— 直接把整段替换掉。海外网络可改用 `https://global.api.openrealm.cn/v1`。
+</Callout>
+
+### 填写模型名
+
+在「模型(Model)」处填入要用的模型名,如 `gpt-5.5` 或 `claude-sonnet-4.6`。若界面是下拉框且没有列出,选「自定义模型 / 手动输入」填名称。可用模型见 [模型](/models)。
+
+### 发一条消息测试
+
+返回对话界面发送一句话,能正常回复即接入成功。
+
+</Steps>
+
+## 常见问题
+
+| 现象 | 可能原因 |
+| --- | --- |
+| 请求失败 / 无响应 | Host 漏了 `/v1`,或仍是官方默认地址。 |
+| 401 | 令牌无效或已停用。 |
+| 模型不存在 | 模型名拼写有误,或不在令牌分组内。对照 [模型](/models) 页复制准确名称。 |
+| 移动端连不上 | 确认手机网络可访问所选线路;国内网络优先用主站,海外用 Global。 |
+
+<Callout type="info">
+  想先验证线路和 Key?用 [在线调试](/playground) 跑一条最快。
+</Callout>

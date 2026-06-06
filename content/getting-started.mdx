@@ -1,0 +1,152 @@
+---
+title: 快速开始
+description: 从注册到跑通第一个 OpenApi 请求的完整入门
+---
+
+import { Steps, Tabs, Callout } from 'nextra/components'
+import { TerminalShot } from '../components/Mockup'
+
+# 快速开始
+
+这一页带你**从零跑通第一个请求**:理解几个基础概念,拿到 Key,选好线路,然后用你熟悉的语言发出第一个调用。全程大约五分钟。本页用 **OpenAI 协议** 演示(适用范围最广);若你偏好 Claude 官方格式,可直接看 [Anthropic 协议](/anthropic)。
+
+## 先理解三个概念
+
+在动手之前,先弄清三个会反复出现的词,后面就不会迷糊:
+
+| 概念 | 含义 | 类比 |
+| --- | --- | --- |
+| **Base URL** | 请求发往的服务器地址,如 `https://api.openrealm.cn/v1` | 餐厅的地址 |
+| **API Key** | 你的身份凭证兼账单,形如 `sk-...` | 你的会员卡 |
+| **Model** | 具体调用哪个模型,如 `gpt-5.5` | 菜单上的菜 |
+
+一次请求,就是「带着会员卡(Key),去某个地址(Base URL),点一道菜(Model)」。理解了这层,任何语言、任何客户端的接入都是同一回事。
+
+<Steps>
+
+### 获取 API Key
+
+登录控制台 [api.openrealm.cn](https://api.openrealm.cn),进入 **令牌 / Token** 页面,新建一个令牌,复制形如 `sk-xxxxxxxx` 的字符串。
+
+<Callout type="warning">
+  API Key 等同于账户余额,请妥善保管:不要写死在前端代码,也不要提交到 Git 仓库。给客户端或他人使用时,建议单独创建一个额度受限的令牌,用完即可在控制台停用。
+</Callout>
+
+### 选择线路(Base URL)
+
+OpenApi 提供两条线路,按你的网络环境选其一:
+
+| 线路 | Base URL | 适用场景 |
+| --- | --- | --- |
+| 主站 · 大陆 CDN | `https://api.openrealm.cn/v1` | 国内服务器 / 本地开发 |
+| Global · 海外加速 | `https://global.api.openrealm.cn/v1` | 海外服务器 |
+
+不确定哪条更快?[首页的线路测速](/) 可以就地测一下两条线路的延迟。下文统一用主站演示,海外把域名换成 `global.api.openrealm.cn` 即可。
+
+<Callout type="info">
+  注意结尾的 **`/v1`**。用 OpenAI SDK 或 curl 直接请求时,地址要带 `/v1`;后面接客户端时规则略有不同,详见 [客户端接入](/clients)。
+</Callout>
+
+### 发出第一个请求
+
+先把密钥放进环境变量(避免明文写进代码),再运行下面任一示例:
+
+<Tabs items={['curl', 'Python', 'Node.js']}>
+
+<Tabs.Tab>
+
+```bash
+export OPENAPI_KEY="sk-..."
+
+curl https://api.openrealm.cn/v1/chat/completions \
+  -H "Authorization: Bearer $OPENAPI_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.5",
+    "messages": [
+      { "role": "user", "content": "用一句话介绍你自己" }
+    ]
+  }'
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+先安装官方 SDK:`pip install openai`
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-xxx",                        # 你的密钥
+    base_url="https://api.openrealm.cn/v1",  # 注意结尾的 /v1
+)
+
+resp = client.chat.completions.create(
+    model="gpt-5.5",
+    messages=[{"role": "user", "content": "用一句话介绍你自己"}],
+)
+print(resp.choices[0].message.content)
+```
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+
+先安装官方 SDK:`npm install openai`
+
+```js
+import OpenAI from 'openai'
+
+const client = new OpenAI({
+  apiKey: 'sk-xxx',
+  baseURL: 'https://api.openrealm.cn/v1',
+})
+
+const resp = await client.chat.completions.create({
+  model: 'gpt-5.5',
+  messages: [{ role: 'user', content: '用一句话介绍你自己' }],
+})
+console.log(resp.choices[0].message.content)
+```
+
+</Tabs.Tab>
+
+</Tabs>
+
+</Steps>
+
+## 你会看到类似这样的返回
+
+请求成功后,终端或控制台会输出模型的回复,大致如下:
+
+<TerminalShot
+  title="bash"
+  lines={[
+    { t: '$ curl https://api.openrealm.cn/v1/chat/completions ...', type: 'cmd' },
+    { t: '', type: 'out' },
+    { t: '{', type: 'out' },
+    { t: '  "choices": [{', type: 'out' },
+    { t: '    "message": {', type: 'out' },
+    { t: '      "role": "assistant",', type: 'var' },
+    { t: '      "content": "我是一个 AI 助手,随时帮你解答问题。"', type: 'var' },
+    { t: '    }', type: 'out' },
+    { t: '  }],', type: 'out' },
+    { t: '  "usage": { "total_tokens": 42 }', type: 'cmt' },
+    { t: '}', type: 'out' }
+  ]}
+  caption="回复正文在 choices[0].message.content;usage 字段是本次计费依据"
+/>
+
+如果想换个模型,把 `model` 改成 `claude-sonnet-4.6`、`gemini-3-pro-preview` 等即可——**同一段代码、同一个 Key** 就能调用不同厂商的模型。可用模型见 [模型](/models) 页。
+
+## 不想写代码?
+
+如果你只是想先确认 Key 和线路是否可用,不必写任何代码——直接到 [在线调试](/playground),填入 Key、选模型、发一句话,马上就能看到真实返回。
+
+## 下一步
+
+<Callout type="info">
+  跑通了?继续深入:[OpenAI 协议](/openai) 讲流式输出、多轮对话与全部参数;[Anthropic 协议](/anthropic) 讲 Claude 官方格式;想接入桌面客户端,看 [客户端接入](/clients)。
+</Callout>

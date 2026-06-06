@@ -1,0 +1,19 @@
+---
+title: 在线调试
+description: 在浏览器里用你的 Key 直接测试 OpenApi(OpenAI 兼容)
+---
+
+import { Playground } from '../components/Playground'
+import { Callout } from 'nextra/components'
+
+# 在线调试
+
+填入你的 API Key,选择线路与模型,直接在本页发起一次真实请求。采用 **OpenAI 兼容** 协议(`/v1/chat/completions`),适配 new-api。
+
+<Callout type="warning">
+  本工具纯前端运行:Key 仅保存在你当前浏览器、随请求直接发往所选线路,**不经过本文档服务器**。仍建议使用额度有限的测试 Key。
+</Callout>
+
+<Playground />
+
+需要可复制的代码示例?见 [OpenAI 协议](/openai) 与 [Anthropic 协议](/anthropic)。
