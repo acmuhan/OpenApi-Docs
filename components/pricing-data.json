@@ -1,12 +1,22 @@
 {
-  "updatedAt": "2026-06-06T11:40:32.835Z",
+  "updatedAt": "2026-06-07T02:04:13.168Z",
   "autoGroups": [
     "default",
     "Pro"
   ],
   "models": [
     {
-      "name": "glm-5.1",
+      "name": "gemini-2.5-pro",
+      "endpoints": [
+        "gemini",
+        "openai"
+      ],
+      "groups": [
+        "default"
+      ]
+    },
+    {
+      "name": "glm-5",
       "endpoints": [
         "openai"
       ],
@@ -15,19 +25,7 @@
       ]
     },
     {
-      "name": "gpt-5.5",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "defult",
-        "Pro",
-        "活动专属",
-        "default"
-      ]
-    },
-    {
-      "name": "gpt-5.5-openai-compact",
+      "name": "gpt-image-2",
       "endpoints": [
         "openai"
       ],
@@ -43,6 +41,16 @@
       ],
       "groups": [
         "default"
+      ]
+    },
+    {
+      "name": "claude-opus-4.7",
+      "endpoints": [
+        "anthropic",
+        "openai"
+      ],
+      "groups": [
+        "Claude Max"
       ]
     },
     {
@@ -66,28 +74,7 @@
       ]
     },
     {
-      "name": "gpt-5.4-mini",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "Pro",
-        "活动专属",
-        "default",
-        "defult"
-      ]
-    },
-    {
-      "name": "deepseek-v4-pro",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "Free DeepSeek"
-      ]
-    },
-    {
-      "name": "gemini-3-pro-preview",
+      "name": "gemini-3.1-pro-preview",
       "endpoints": [
         "gemini",
         "openai"
@@ -97,65 +84,7 @@
       ]
     },
     {
-      "name": "qwen-image-2.0-pro",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "default"
-      ]
-    },
-    {
-      "name": "qwen3.6-plus",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "default"
-      ]
-    },
-    {
-      "name": "claude-opus-4.6",
-      "endpoints": [
-        "anthropic",
-        "openai"
-      ],
-      "groups": [
-        "Claude Max"
-      ]
-    },
-    {
-      "name": "claude-sonnet-4.6",
-      "endpoints": [
-        "anthropic",
-        "openai"
-      ],
-      "groups": [
-        "Claude Max"
-      ]
-    },
-    {
-      "name": "glm-5",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "default"
-      ]
-    },
-    {
-      "name": "gpt-5.5-codex-auto-review",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "default",
-        "Pro",
-        "活动专属"
-      ]
-    },
-    {
-      "name": "qwen3.6-flash",
+      "name": "kimi-k2.6",
       "endpoints": [
         "openai"
       ],
@@ -173,16 +102,6 @@
       ]
     },
     {
-      "name": "gpt-image-2",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "Pro",
-        "default"
-      ]
-    },
-    {
       "name": "qwen-image-2.0",
       "endpoints": [
         "openai"
@@ -192,13 +111,42 @@
       ]
     },
     {
-      "name": "gemini-2.5-pro",
+      "name": "qwen-image-2.0-pro",
       "endpoints": [
-        "gemini",
         "openai"
       ],
       "groups": [
         "default"
+      ]
+    },
+    {
+      "name": "claude-opus-4.8",
+      "endpoints": [
+        "anthropic",
+        "openai"
+      ],
+      "groups": [
+        "Claude Max"
+      ]
+    },
+    {
+      "name": "MiniMax-M2.5",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "default"
+      ]
+    },
+    {
+      "name": "grok-imagine-image-lite",
+      "endpoints": [
+        "openai",
+        "openai-response"
+      ],
+      "groups": [
+        "default",
+        "活动专属"
       ]
     },
     {
@@ -212,7 +160,18 @@
       ]
     },
     {
-      "name": "grok-4-1-fast-non-reasoning",
+      "name": "grok-4.20-fast",
+      "endpoints": [
+        "openai",
+        "openai-response"
+      ],
+      "groups": [
+        "default",
+        "活动专属"
+      ]
+    },
+    {
+      "name": "glm-5.1",
       "endpoints": [
         "openai"
       ],
@@ -221,17 +180,46 @@
       ]
     },
     {
-      "name": "claude-opus-4.7",
+      "name": "gpt-5.4-mini",
       "endpoints": [
-        "anthropic",
         "openai"
       ],
       "groups": [
-        "Claude Max"
+        "default",
+        "defult",
+        "Pro",
+        "活动专属"
       ]
     },
     {
-      "name": "claude-opus-4.8",
+      "name": "qwen3.6-plus",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "default"
+      ]
+    },
+    {
+      "name": "deepseek-v4-pro",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "Free DeepSeek"
+      ]
+    },
+    {
+      "name": "qwen3.6-flash",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "default"
+      ]
+    },
+    {
+      "name": "claude-sonnet-4.6",
       "endpoints": [
         "anthropic",
         "openai"
@@ -251,7 +239,7 @@
       ]
     },
     {
-      "name": "gemini-3.1-pro-preview",
+      "name": "gemini-3-pro-preview",
       "endpoints": [
         "gemini",
         "openai"
@@ -266,10 +254,54 @@
         "openai"
       ],
       "groups": [
+        "default",
         "defult",
         "Pro",
-        "活动专属",
-        "default"
+        "活动专属"
+      ]
+    },
+    {
+      "name": "gpt-5.5-codex-auto-review",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "default",
+        "Pro",
+        "活动专属"
+      ]
+    },
+    {
+      "name": "gpt-5.5-openai-compact",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "default",
+        "Pro"
+      ]
+    },
+    {
+      "name": "gpt-5.5",
+      "endpoints": [
+        "openai"
+      ],
+      "groups": [
+        "default",
+        "defult",
+        "Pro",
+        "活动专属"
+      ]
+    },
+    {
+      "name": "grok-4.20-0309-non-reasoning",
+      "endpoints": [
+        "openai",
+        "openai-response"
+      ],
+      "groups": [
+        "default",
+        "活动专属"
       ]
     },
     {
@@ -282,30 +314,13 @@
       ]
     },
     {
-      "name": "grok-4-1-fast-reasoning",
+      "name": "claude-opus-4.6",
       "endpoints": [
+        "anthropic",
         "openai"
       ],
       "groups": [
-        "default"
-      ]
-    },
-    {
-      "name": "kimi-k2.6",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "default"
-      ]
-    },
-    {
-      "name": "MiniMax-M2.5",
-      "endpoints": [
-        "openai"
-      ],
-      "groups": [
-        "default"
+        "Claude Max"
       ]
     }
   ]
