@@ -36,7 +36,7 @@ const footer = (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', fontSize: '0.875rem' }}>
         <a href="https://api.openrealm.cn" target="_blank" rel="noreferrer">主线路 · 大陆 CDN</a>
         <a href="https://global.api.openrealm.cn" target="_blank" rel="noreferrer">Global · 纯 API 加速</a>
-        <a href="https://api.openapi.edgeone.gloabl.muhan.wiki" target="_blank" rel="noreferrer">Global EdgeOne · 连通性最好</a>
+        <a href="https://api.openapi.edgeone.gloabl.muhan.wiki" target="_blank" rel="noreferrer">Global EdgeOne 线路</a>
         <a href="https://api.openrealm.cn/pricing" target="_blank" rel="noreferrer">价格</a>
       </div>
       <p style={{ fontSize: '0.875rem', opacity: 0.7, margin: 0 }}>

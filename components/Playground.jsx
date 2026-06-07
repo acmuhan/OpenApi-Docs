@@ -14,7 +14,7 @@ const SNAPSHOT_MODELS = (pricing.models || [])
 const BASES = [
   { value: 'https://api.openrealm.cn/v1', label: '主线路 · 大陆 CDN' },
   { value: 'https://global.api.openrealm.cn/v1', label: 'Global · 纯 API 加速' },
-  { value: 'https://api.openapi.edgeone.gloabl.muhan.wiki/v1', label: 'Global EdgeOne · 连通性最好' }
+  { value: 'https://api.openapi.edgeone.gloabl.muhan.wiki/v1', label: 'Global EdgeOne 线路' }
 ]
 
 const CSS = `
