@@ -34,14 +34,15 @@ import { TerminalShot } from '../components/Mockup'
 
 ### 选择线路(Base URL)
 
-OpenApi 提供两条线路,按你的网络环境选其一:
+OpenApi 提供三条线路,按你的网络环境选其一:
 
 | 线路 | Base URL | 适用场景 |
 | --- | --- | --- |
-| 主站 · 大陆 CDN | `https://api.openrealm.cn/v1` | 国内服务器 / 本地开发 |
-| Global · 海外加速 | `https://global.api.openrealm.cn/v1` | 海外服务器 |
+| 主线路 · 大陆 CDN | `https://api.openrealm.cn/v1` | 国内服务器 / 本地开发 |
+| Global · 纯 API 加速 | `https://global.api.openrealm.cn/v1` | 国外加速线路 |
+| Global EdgeOne · 连通性最好 | `https://api.openapi.edgeone.gloabl.muhan.wiki/v1` | 全球加速线路 / EdgeOne |
 
-不确定哪条更快?[首页的线路测速](/) 可以就地测一下两条线路的延迟。下文统一用主站演示,海外把域名换成 `global.api.openrealm.cn` 即可。
+不确定哪条更快?[首页的线路测速](/) 可以就地测一下三条线路的延迟。下文统一用主线路演示;国外环境可优先尝试 Global 或 Global EdgeOne。
 
 <Callout type="info">
   注意结尾的 **`/v1`**。用 OpenAI SDK 或 curl 直接请求时,地址要带 `/v1`;后面接客户端时规则略有不同,详见 [客户端接入](/clients)。

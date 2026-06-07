@@ -3,8 +3,9 @@
 import { useState } from 'react'
 
 const LINES = [
-  { name: '主站 · 大陆 CDN', url: 'https://api.openrealm.cn' },
-  { name: 'Global · 海外加速', url: 'https://global.api.openrealm.cn' }
+  { name: '主线路 · 大陆 CDN', url: 'https://api.openrealm.cn' },
+  { name: 'Global · 纯 API 加速', url: 'https://global.api.openrealm.cn' },
+  { name: 'Global EdgeOne · 连通性最好', url: 'https://api.openapi.edgeone.gloabl.muhan.wiki' }
 ]
 
 const PROBE_PATH = '/v1/models' // 该端点 CORS 全开,适合测速(401 也能测往返延迟)

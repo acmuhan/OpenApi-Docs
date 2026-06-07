@@ -40,7 +40,7 @@ import { ConfigShot } from '../../components/Mockup'
 | API 密钥 / API Key | 你的 `sk-...` |
 
 <Callout type="warning">
-  ChatBox 是 OpenAI 兼容客户端,地址填到 **带 `/v1`**。部分版本的 Host 默认值是 `https://api.openai.com/v1` —— 直接把整段替换掉。海外网络可改用 `https://global.api.openrealm.cn/v1`。
+  ChatBox 是 OpenAI 兼容客户端,地址填到 **带 `/v1`**。部分版本的 Host 默认值是 `https://api.openai.com/v1` —— 直接把整段替换掉。国外环境可改用 `https://global.api.openrealm.cn/v1` 或 `https://api.openapi.edgeone.gloabl.muhan.wiki/v1`。
 </Callout>
 
 ### 填写模型名
@@ -60,7 +60,7 @@ import { ConfigShot } from '../../components/Mockup'
 | 请求失败 / 无响应 | Host 漏了 `/v1`,或仍是官方默认地址。 |
 | 401 | 令牌无效或已停用。 |
 | 模型不存在 | 模型名拼写有误,或不在令牌分组内。对照 [模型](/models) 页复制准确名称。 |
-| 移动端连不上 | 确认手机网络可访问所选线路;国内网络优先用主站,海外用 Global。 |
+| 移动端连不上 | 确认手机网络可访问所选线路;国内网络优先用主线路,国外网络优先尝试 Global 或 Global EdgeOne。 |
 
 <Callout type="info">
   想先验证线路和 Key?用 [在线调试](/playground) 跑一条最快。

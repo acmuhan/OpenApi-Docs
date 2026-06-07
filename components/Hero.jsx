@@ -8,13 +8,13 @@ const MODELS = pricing.models || []
 const STATS = [
   { value: MODELS.length || 31, suffix: '+', label: '可用模型' },
   { value: 2, suffix: '', label: '兼容协议' },
-  { value: 2, suffix: '', label: '加速线路' }
+  { value: 3, suffix: '', label: '加速线路' }
 ]
 
 const FEATURES = [
   { ico: 'link', t: '双协议兼容', d: '同时支持 OpenAI 与 Anthropic 两套协议,现有代码几乎零改动即可接入。' },
   { ico: 'smart_toy', t: '多家模型', d: 'Claude、GPT、Gemini、Qwen、DeepSeek、Grok 等主流模型,一个余额全部调用。' },
-  { ico: 'speed', t: '双线路加速', d: '大陆 CDN 与海外 Global 两条线路,就近接入,页面可一键测速。' },
+  { ico: 'speed', t: '三线路加速', d: '主线路、Global 纯 API、Global EdgeOne 三条线路,按网络环境选择最优连通。' },
   { ico: 'construction', t: '开箱即用', d: '在线调试、模型浏览、客户端接入教程齐全,几分钟跑通第一个请求。' }
 ]
 

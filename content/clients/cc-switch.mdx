@@ -23,7 +23,7 @@ import { ConfigShot } from '../../components/Mockup'
   base="https://api.openrealm.cn"
   keyLabel="Token"
   model="（用于 Claude Code,地址不带 /v1）"
-  caption="给配置起名「OpenApi-主站」,方便和其他供应商区分"
+  caption="给配置起名「OpenApi-主线路」,方便和其他供应商区分"
 />
 
 ## 它是什么
@@ -36,7 +36,7 @@ import { ConfigShot } from '../../components/Mockup'
 
 CC Switch 负责「保存与切换配置」,真正的接入参数还是 OpenApi 那两样:
 
-- **Base URL**:`https://api.openrealm.cn`(海外用 `https://global.api.openrealm.cn`)
+- **Base URL**:`https://api.openrealm.cn`(国外环境可用 `https://global.api.openrealm.cn` 或 `https://api.openapi.edgeone.gloabl.muhan.wiki`)
 - **API Key**:你的 `sk-...` 令牌
 
 把这两个值在 CC Switch 里存成一套指向 OpenApi 的配置即可。
@@ -60,7 +60,7 @@ CC Switch 负责「保存与切换配置」,真正的接入参数还是 OpenApi 
 - ![添加渠道-填写表单](../../images/add-channel-step2.2.png)
 - 地址(Base URL):`https://api.openrealm.cn`
 - 密钥(Token / Key):`sk-...`
-- 取个好认的名字,例如「OpenApi-主站」「OpenApi-Global」,方便区分线路。
+- 取个好认的名字,例如「OpenApi-主线路」「OpenApi-Global」「OpenApi-EdgeOne」,方便区分线路。
 - 在设置模型时，您可能会遇到**使用模型非IDE原生模型**（如在CC上使用GPT）~~NTR+1~~，此时需要按下图调整**高级设置**配置模型映射
 - ![添加渠道-映射](../../images/add-channel-step2.3.png)
 
@@ -90,9 +90,9 @@ CC Switch 负责「保存与切换配置」,真正的接入参数还是 OpenApi 
 
 </Steps>
 
-## 小技巧:为两条线路各存一套
+## 小技巧:为三条线路各存一套
 
-把主站和 Global 各存成一套配置(名字带上线路),网络环境变化时直接切换,比改地址快得多。哪条线路更快,可在 [首页测速](/) 处就地测一下。
+把主线路、Global、Global EdgeOne 各存成一套配置(名字带上线路),网络环境变化时直接切换,比改地址快得多。哪条线路更快,可在 [首页测速](/) 处就地测一下。
 
 <Callout type="info">
   CC Switch 的界面与功能可能随版本更新而变化,具体操作请以 [官方文档](https://ccswitch.io/zh/docs) 为准。
